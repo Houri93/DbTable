@@ -3,7 +3,7 @@
 namespace DbTable;
 
 public interface IDataLoader<DbContextType, DataType>
-    where DataType : class 
+    where DataType : class
     where DbContextType : DbContext
 {
     DbContextType GetDbContext();

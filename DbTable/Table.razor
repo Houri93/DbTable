@@ -1,19 +1,54 @@
 ﻿@using Microsoft.EntityFrameworkCore
 
+@*@attribute [CascadingTypeParameter(nameof(DbContextType))]
+    @attribute [CascadingTypeParameter(nameof(DataType))]*@
+
 @typeparam DbContextType
 @typeparam DataType
 
-
-
-<table>
+<table class="@Class">
     <thead>
         <tr>
             <CascadingValue Value="this">
                 @ChildContent
-            </CascadingValue>          
+            </CascadingValue>
         </tr>
     </thead>
     <tbody>
+
+        @if (items.Any())
+        {
+            foreach (var item in items)
+            {
+                <tr>
+                    @foreach (var column in columns)
+                    {
+                        var prop = column.Property.Compile();
+                        var value = prop(item);
+                        <td>@value</td>
+                    }
+                </tr>
+            }
+        }
+        else
+        {
+
+        }
     </tbody>
+
+    <tfoot>
+        <button @onclick="FirstPageClicked" class="btn btn-primary @(FirstPageEnabled ? "" : "disabled")">First</button>
+        <button @onclick="PrevPageClicked" class="btn btn-primary @(PrevPageEnabled ? "" : "disabled")">Previous</button>
+
+        @*    @for (var pn = pageSelectStart; pn <= pageSelectEnd; pn++)
+            {
+            <button @onclick="()=> SetPageIndex(pn-1)" class="btn btn-link">Next</button>
+            }*@
+
+        <p>@itemsCount</p>
+
+        <button @onclick="NextPageClicked" class="btn btn-primary @(NextPageEnabled ? "" : "disabled")">Next</button>
+        <button @onclick="LastPageClicked" class="btn btn-primary @(LastPageEnabled ? "" : "disabled")">Last</button>
+    </tfoot>
 </table>
 

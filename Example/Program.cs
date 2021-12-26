@@ -1,7 +1,22 @@
+
 using Example.Data;
 
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+using System.Linq;
+
+using (var db = new DbCon())
+{
+    db.Database.EnsureCreated();
+
+    if (!db.Items.Any())
+    {
+        db.Items.AddRange(Enumerable.Range(1, 10).Select(i => new Item
+        {
+            Created = DateTime.Now,
+            Name = "Item " + i.ToString(),
+        }));
+        db.SaveChanges();       
+    }
+}
 
 var builder = WebApplication.CreateBuilder(args);
 

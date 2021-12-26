@@ -3,4 +3,19 @@
 @typeparam DbContextType
 @typeparam DataType
 
-<th>@Title</th>
+<th @onclick="Clicked">
+    <span>@Title</span>
+
+    @switch (SortMode)
+    {
+        case SortMode.Ascending:
+            <span class="oi oi-chevron-top"></span>
+            break;
+
+        case SortMode.Descending:
+            <span class="oi oi-chevron-bottom"></span>
+            break;
+    }
+
+
+</th>
