@@ -1,0 +1,19 @@
+﻿@using Microsoft.EntityFrameworkCore
+
+@typeparam DbContextType
+@typeparam DataType
+
+
+
+<table>
+    <thead>
+        <tr>
+            <CascadingValue Value="this">
+                @ChildContent
+            </CascadingValue>          
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+

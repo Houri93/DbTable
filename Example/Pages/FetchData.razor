@@ -1,0 +1,25 @@
+﻿@page "/fetchdata"
+
+<PageTitle>Weather forecast</PageTitle>
+
+@using DbTable
+@using Example.Data
+
+
+<h1>Weather forecast</h1>
+
+<Table DbContextType="DbCon" DataType="Item" DataLoader="itemLoader" ItemsPerPage="10" Class="table">
+
+    <Column DbContextType="DbCon" DataType="Item" Title="Id" Sort="a=>a.Id" Filter="a=>a.Id">
+
+    </Column>
+
+    <Column DbContextType="DbCon" DataType="Item"  Title="Name" Sort="a => a.Name" Filter="a => a.Name">
+
+    </Column>
+
+    <Column DbContextType="DbCon" DataType="Item"  Title="Created" Sort="a => a.Created" Filter="a => a.Created">
+
+    </Column>
+
+</Table>
