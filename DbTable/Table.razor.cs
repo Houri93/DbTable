@@ -34,6 +34,7 @@ public partial class Table<DbContextType, DataType>
     internal bool PrevPageEnabled => pageIndex - 1 >= 0;
     internal bool LastPageEnabled => pageIndex < pageCount - 1;
 
+
     private void FirstPageClicked() => SetPageIndex(0);
     private void NextPageClicked() => SetPageIndex(pageIndex + 1);
     private void PrevPageClicked() => SetPageIndex(pageIndex - 1);

@@ -1,21 +1,12 @@
 
 using Example.Data;
+using Example.Services;
 
 using System.Linq;
 
 using (var db = new DbCon())
 {
     db.Database.EnsureCreated();
-
-    if (!db.Items.Any())
-    {
-        db.Items.AddRange(Enumerable.Range(1, 10).Select(i => new Item
-        {
-            Created = DateTime.Now,
-            Name = "Item " + i.ToString(),
-        }));
-        db.SaveChanges();       
-    }
 }
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+builder.Services.AddSingleton<ItemService>();
 
 var app = builder.Build();
 
@@ -42,5 +34,7 @@ app.UseRouting();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
+
+app.Services.GetRequiredService<ItemService>();
 
 app.Run();
