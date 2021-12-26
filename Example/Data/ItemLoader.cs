@@ -4,20 +4,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Example.Data;
 
-public class ItemLoader : IDataLoader<DbCon, Item>
+public class ItemLoader : IDataLoader<Item>
 {
-    public DbCon GetDbContext()
-    {
-        return new DbCon();
-    }
+    private DbCon db;
 
-    public DbSet<Item> GetDbSet(DbCon db)
+
+
+    public IQueryable<Item> GetQuery()
     {
+        db = new DbCon();
         return db.Items;
     }
-
-    public void DisposeDbContext(DbCon db)
+    public void EndQuery()
     {
         db.Dispose();
     }
+
 }

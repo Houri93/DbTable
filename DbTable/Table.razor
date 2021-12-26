@@ -1,15 +1,11 @@
 ﻿@using Microsoft.EntityFrameworkCore
 
-@*@attribute [CascadingTypeParameter(nameof(DbContextType))]
-    @attribute [CascadingTypeParameter(nameof(DataType))]*@
-
-@typeparam DbContextType
 @typeparam DataType
 
 <table class="@Class">
     <thead>
         <tr>
-            <CascadingValue Value="this">
+            <CascadingValue Value="this" Name="Table">
                 @ChildContent
             </CascadingValue>
         </tr>
@@ -23,9 +19,20 @@
                 <tr>
                     @foreach (var column in columns)
                     {
-                        var prop = column.Property.Compile();
-                        var value = prop(item);
-                        <td>@value</td>
+                        <td>
+                            @if (column.Template is null)
+                            {
+                                var prop = column.CompiledProperty;
+                                var value = prop(item);
+                                @value
+                            }
+                            else
+                            {
+                                var fragment = column.Template(item);
+                                @fragment
+                            }
+                        </td>
+
                     }
                 </tr>
             }

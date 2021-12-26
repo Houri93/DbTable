@@ -7,17 +7,18 @@
 
 <h1>Fetch Data</h1>
 
-<Table DbContextType="DbCon" DataType="Item" DataLoader="itemLoader" ItemsPerPage="5" Class="table">
+<Table DataType="Item" DataLoader="itemLoader" ItemsPerPage="5" Class="table">
 
-    <Column DbContextType="DbCon" DataType="Item" Title="Id" Property="a => a.Id">
-
+    <Column Title="Id" Property="a => a.Id">
     </Column>
 
-    <Column DbContextType="DbCon" DataType="Item" Title="Name" Property="a => a.Name">
-
+    <Column Title="Name" Property="a => a.Name">
+        <Template Context="a">
+            @a.Name.ToLower()
+        </Template>
     </Column>
 
-    <Column DbContextType="DbCon" DataType="Item" Title="Created" Property="a => a.Created">
+    <Column Title="Created" Property="a => a.Created">
 
     </Column>
 

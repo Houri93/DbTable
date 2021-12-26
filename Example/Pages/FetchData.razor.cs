@@ -6,14 +6,14 @@ using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Example.Pages;
 
-public partial class FetchData:IDisposable
+public partial class FetchData : IDisposable
 {
     private ItemLoader itemLoader = new();
 
     [Inject]
     public ItemService ItemService { get; set; }
 
-   
+
     protected override void OnInitialized()
     {
         ItemService.Add += ItemService_Add;

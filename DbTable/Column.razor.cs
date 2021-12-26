@@ -5,11 +5,10 @@ using System.Linq.Expressions;
 
 namespace DbTable;
 
-public partial class Column<DbContextType, DataType>
-    where DataType : class
-    where DbContextType : DbContext
+[CascadingTypeParameter(nameof(DataType))]
+public partial class Column<DataType>
 {
-
+    private Func<DataType, object> compiledProperty;
 
     [Parameter]
     [EditorRequired]
@@ -18,17 +17,23 @@ public partial class Column<DbContextType, DataType>
     [Parameter]
     public Expression<Func<DataType, object>> Property { get; set; }
 
-    [CascadingParameter]
-    public Table<DbContextType, DataType> Table { get; set; }
+    internal Func<DataType, object> CompiledProperty
+    {
+        get => compiledProperty ??= Property.Compile();
+        set => compiledProperty = value;
+    }
+
+    [CascadingParameter(Name = nameof(Table))]
+    public Table<DataType> Table { get; set; }
 
     internal SortMode SortMode { get; set; } = SortMode.Disabled;
 
-    protected override void OnAfterRender(bool firstRender)
+    [Parameter]
+    public RenderFragment<DataType> Template { get; set; }
+
+    protected override void OnInitialized()
     {
-        if (firstRender)
-        {
-            Table.AddColumn(this);
-        }
+        Table.AddColumn(this);
     }
 
     private void Clicked()
