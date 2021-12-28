@@ -27,6 +27,9 @@ public partial class FetchData : IDisposable
     public void Dispose()
     {
         ItemService.Add -= ItemService_Add;
+
+        itemLoader.Dispose();
+        itemLoader = null;
     }
 
 }

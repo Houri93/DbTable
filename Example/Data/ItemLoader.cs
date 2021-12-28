@@ -7,9 +7,6 @@ namespace Example.Data;
 public class ItemLoader : IDataLoader<Item>
 {
     private DbCon db;
-
-
-
     public IQueryable<Item> GetQuery()
     {
         db = new DbCon();
@@ -18,6 +15,11 @@ public class ItemLoader : IDataLoader<Item>
     public void EndQuery()
     {
         db.Dispose();
+        db = null;
     }
 
+    public void Dispose()
+    {
+        EndQuery();
+    }
 }

@@ -2,7 +2,64 @@
 
 @typeparam DataType
 
+
+@if (FilterableColumns.Any())
+{
+    <div>
+
+        @foreach (var column in FilterableColumns)
+        {
+            <label>@column.Title</label>
+            @switch (column.FilterType)
+            {
+                case FilterTypes.IntNumber:
+                    <input type="number" step="1" @bind="column.FilterNumber" />
+                    break;
+
+                case FilterTypes.DoubleNumber:
+                    <input type="number" step="any" @bind="column.FilterNumber" />
+                    break;
+
+                case FilterTypes.String:
+                    <input type="text" @bind="column.FilterString" />
+                    break;
+
+                case FilterTypes.DateOnly:
+                    <input type="date" @bind="column.FilterDate" />
+                    break;
+
+                case FilterTypes.TimeOnly:
+                    <input type="time" @bind="column.FilterTime" />
+                    break;
+
+                case FilterTypes.DateTime:
+                    <input type="datetime-local" @bind="column.FilterDateTime" />
+                    break;
+
+                case FilterTypes.Bool:
+                    <input type="checkbox" @bind="column.FilterBool" />
+                    break;
+
+                case FilterTypes.Enum:
+                    var values = Enum.GetValues(column.PropertyType);
+                    <select @bind="column.FilterString">
+                        <option value="">None</option>
+                        @foreach (var v in values)
+                        {
+                            <option value="@v">@v</option>
+                        }
+                    </select>
+                    break;
+            }
+        }
+
+        <button @onclick="SearchClicked">Filter</button>
+
+    </div>
+}
+
 <table class="@Class">
+
     <thead>
         <tr>
             <CascadingValue Value="this" Name="Table">
@@ -10,6 +67,7 @@
             </CascadingValue>
         </tr>
     </thead>
+
     <tbody>
 
         @if (items.Any())

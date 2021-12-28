@@ -9,16 +9,21 @@
 
 <Table DataType="Item" DataLoader="itemLoader" ItemsPerPage="5" Class="table">
 
-    <Column Title="Id" Property="a => a.Id">
+    <Column Title="Id" Property="a => a.Id" Sort="true" Filter="true">
+
     </Column>
 
-    <Column Title="Name" Property="a => a.Name">
+    <Column Title="Name" Property="a => a.Name" Sort="true" Filter="true">
         <Template Context="a">
             @a.Name.ToLower()
         </Template>
     </Column>
 
-    <Column Title="Created" Property="a => a.Created">
+    <Column Title="Created" Property="a => a.Created" Sort="true" Filter="true">
+
+    </Column> 
+    
+    <Column Title="Race" Property="a => a.Race" Sort="true" Filter="true">
 
     </Column>
 

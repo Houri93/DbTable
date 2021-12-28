@@ -2,7 +2,7 @@
 
 namespace DbTable;
 
-public interface IDataLoader<DataType>
+public interface IDataLoader<DataType> : IDisposable
 {
     IQueryable<DataType> GetQuery();
     void EndQuery();
