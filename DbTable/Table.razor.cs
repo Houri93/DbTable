@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
+using System.Linq.Dynamic.Core.Parser;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -15,6 +16,7 @@ public partial class Table<DataType>
     private int pageIndex = 0;
     private int pageCount = 0;
     private int itemsCount = 0;
+    private int queryTotalCount = 0;
 
     [Parameter]
     [EditorRequired]
@@ -30,10 +32,10 @@ public partial class Table<DataType>
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
-    internal bool FirstPageEnabled => pageIndex > 0;
-    internal bool NextPageEnabled => pageIndex + 1 <= pageCount - 1;
-    internal bool PrevPageEnabled => pageIndex - 1 >= 0;
-    internal bool LastPageEnabled => pageIndex < pageCount - 1;
+    internal bool FirstPageEnabled => queryTotalCount > 0 && pageIndex > 0;
+    internal bool NextPageEnabled => queryTotalCount > 0 && pageIndex + 1 <= pageCount - 1;
+    internal bool PrevPageEnabled => queryTotalCount > 0 && pageIndex - 1 >= 0;
+    internal bool LastPageEnabled => queryTotalCount > 0 && pageIndex < pageCount - 1;
 
     internal IEnumerable<Column<DataType>> FilterableColumns => columns.Where(a => a.Filter);
 
@@ -66,20 +68,48 @@ public partial class Table<DataType>
         pageIndex = 0;
         OnParametersSet();
     }
-    private void SearchClicked()
+    private void FilterClicked()
     {
+        pageIndex = 0;
+        UpdateData();
+    }
+    private void FilterClearClicked()
+    {
+        pageIndex = 0;
+        foreach (var c in FilterableColumns)
+        {
+            c.FilterBool = default;
+            c.FilterString = default;
+
+            c.FilterDateFrom = default;
+            c.FilterDateTo = default;
+
+            c.FilterTimeFrom = default;
+            c.FilterTimeTo = default;
+
+            c.FilterDateTimeFrom = default;
+            c.FilterDateTimeTo = default;
+
+            c.FilterNumberFrom = default;
+            c.FilterNumberTo = default;
+        }
         UpdateData();
     }
     private void UpdateData()
     {
         var query = DataLoader.GetQuery();
         itemsCount = query.Count();
-        pageCount = itemsCount / ItemsPerPage;
 
         query = ApplyFilters(query);
         query = ApplyOrdering(query);
 
+        queryTotalCount = query.Count();
+
+        pageCount = (int)Math.Ceiling(queryTotalCount / (double)ItemsPerPage);
+
+
         query = query.Skip(ItemsPerPage * pageIndex).Take(ItemsPerPage);
+
 
         var inMemory = query.ToList();
 
@@ -100,14 +130,14 @@ public partial class Table<DataType>
 
             query = column.FilterType switch
             {
-                FilterTypes.IntNumber => ApplySingleFilter(column.FilterNumber, pi, query, true),
-                FilterTypes.DoubleNumber => ApplySingleFilter(column.FilterNumber, pi, query, true),
-                FilterTypes.String => ApplySingleFilter(column.FilterString, pi, query, false),
-                FilterTypes.DateOnly => ApplySingleFilter(column.FilterDate, pi, query, false),
-                FilterTypes.TimeOnly => ApplySingleFilter(column.FilterTime, pi, query, false),
-                FilterTypes.DateTime => ApplySingleFilter(column.FilterDateTime, pi, query, false),
-                FilterTypes.Bool => ApplySingleFilter(column.FilterBool, pi, query, false),
-                FilterTypes.Enum => ApplySingleFilter(column.FilterString is null ? null : Enum.Parse(column.PropertyType, column.FilterString), pi, query, false),
+                FilterTypes.IntNumber => ApplySingleFilter(column.FilterNumberFrom, column.FilterNumberTo, pi, query, true, false, true),
+                FilterTypes.DoubleNumber => ApplySingleFilter(column.FilterNumberFrom, column.FilterNumberTo, pi, query, true, false, true),
+                FilterTypes.String => ApplySingleFilter(column.FilterString, null, pi, query, false, true, false),
+                FilterTypes.DateOnly => ApplySingleFilter(column.FilterDateFrom, column.FilterDateTo, pi, query, false, false, true),
+                FilterTypes.TimeOnly => ApplySingleFilter(column.FilterTimeFrom, column.FilterTimeTo, pi, query, false, false, true),
+                FilterTypes.DateTime => ApplySingleFilter(column.FilterDateTimeFrom, column.FilterDateTimeTo, pi, query, false, false, true),
+                FilterTypes.Bool => ApplySingleFilter(column.FilterBool, null, pi, query, false, false, false),
+                FilterTypes.Enum => ApplySingleFilter(column.FilterString is null ? null : Enum.Parse(column.PropertyType, column.FilterString), null, pi, query, false, false, false),
                 _ => throw new NotImplementedException("Filter type not implemented"),
             };
         }
@@ -115,29 +145,55 @@ public partial class Table<DataType>
         return query;
     }
 
-    private IQueryable<DataType> ApplySingleFilter<T>(T? value, PropertyInfo pi, IQueryable<DataType> query, bool asString)
+    private IQueryable<DataType> ApplySingleFilter<T>(T? fromValue, T? toValue, PropertyInfo pi, IQueryable<DataType> query, bool castSourceToDecimal, bool contains, bool range)
     {
-        if (value is null)
+        if (fromValue is null && toValue is null)
         {
             return query;
         }
 
         var param = Expression.Parameter(typeof(DataType), "a");
         var prop = Expression.Property(param, pi);
-        var valueExp = Expression.Constant(asString ? value.ToString() : value);
 
-        Expression src;
-        if (asString)
+        var fromValueExp = Expression.Constant(fromValue);
+        var toValueExp = Expression.Constant(toValue);
+
+
+        Expression src = castSourceToDecimal ? Expression.Convert(prop, typeof(decimal)) : prop;
+
+        Expression src2;
+        if (contains)
         {
-            src = Expression.Call(prop, "ToString", null);
+            var valueLower = Expression.Call(fromValueExp, "ToLower", null, null);
+            var srcLower = Expression.Call(src, "ToLower", null, null);
+            src2 = Expression.Call(srcLower, "Contains", null, valueLower);
+        }
+        else if (range)
+        {
+            if (fromValue is not null && toValue is not null)
+            {
+                var less = Expression.LessThanOrEqual(fromValueExp, src);
+                var greater = Expression.GreaterThanOrEqual(toValueExp, src);
+                var and = Expression.And(less, greater);
+                src2 = and;
+            }
+            else if (fromValue is not null && toValue is null)
+            {
+                var less = Expression.LessThanOrEqual(fromValueExp, src);
+                src2 = less;
+            }
+            else
+            {
+                var greater = Expression.GreaterThanOrEqual(toValueExp, src);
+                src2 = greater;
+            }
         }
         else
         {
-            src = prop;
+            src2 = Expression.Equal(src, fromValueExp);
         }
 
-        var equals = Expression.Equal(src, valueExp);
-        var lamda = Expression.Lambda(equals, param);
+        var lamda = Expression.Lambda(src2, param);
 
         var types = new Type[] { query.ElementType };
         var call = Expression.Call(typeof(Queryable), "Where", types, query.Expression, lamda);

@@ -1,4 +1,1 @@
-* Column Template
-* Global Search
-* Column Filtering
 * Page Counter

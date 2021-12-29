@@ -11,12 +11,16 @@ public partial class Column<DataType>
 {
     private Func<DataType, object> compiledProperty;
 
-    internal decimal? FilterNumber { get; set; }
-    internal DateOnly? FilterDate { get; set; }
-    internal TimeOnly? FilterTime { get; set; }
-    internal DateTime? FilterDateTime { get; set; }
-    internal string FilterString { get; set; }
-    internal bool FilterBool { get; set; }
+    internal decimal? FilterNumberFrom { get; set; }
+    internal decimal? FilterNumberTo { get; set; }
+    internal DateOnly? FilterDateFrom { get; set; }
+    internal DateOnly? FilterDateTo { get; set; }
+    internal TimeOnly? FilterTimeFrom { get; set; }
+    internal TimeOnly? FilterTimeTo { get; set; }
+    internal DateTime? FilterDateTimeFrom { get; set; }
+    internal DateTime? FilterDateTimeTo { get; set; }
+    internal string? FilterString { get; set; }
+    internal bool? FilterBool { get; set; }
 
     [Parameter]
     [EditorRequired]

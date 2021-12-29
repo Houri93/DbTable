@@ -14,5 +14,7 @@ namespace Example.Data
         public DateTime Created { get; set; }
 
         public Races Race { get; set; }
+
+        public bool On { get; set; }
     }
 }
