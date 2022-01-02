@@ -119,16 +119,22 @@ public partial class Table<DataType>
 
         pageCount = (int)Math.Ceiling(queryTotalCount / (double)ItemsPerPage);
 
-        var pages = Enumerable
-            .Range(HandleLimits(), displayedPageCount * 2 + 1)
+        if (pageCount == 0)
+        {
+            pageSelectStart = pageSelectEnd = 1;
+        }
+        else
+        {
+            var pages = Enumerable
+            .Range(PageLimits(), displayedPageCount * 2 + 1)
             .TakeWhile(p => p <= pageCount)
             .ToList();
 
-        pageSelectStart = pages.First();
-        pageSelectEnd = pages.Last();
+            pageSelectStart = pages.First();
+            pageSelectEnd = pages.Last();
+        }
 
         query = query.Skip(ItemsPerPage * pageIndex).Take(ItemsPerPage);
-
 
         var inMemory = query.ToList();
 
@@ -136,7 +142,7 @@ public partial class Table<DataType>
         items.AddRange(inMemory);
     }
 
-    private int HandleLimits()
+    private int PageLimits()
     {
         return Math.Min(Math.Max(1, pageCount - (2 * displayedPageCount)), Math.Max(1, pageIndex - displayedPageCount));
     }
