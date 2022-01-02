@@ -20,7 +20,6 @@ public partial class Column<DataType>
     internal DateTime? FilterDateTimeFrom { get; set; }
     internal DateTime? FilterDateTimeTo { get; set; }
     internal string? FilterString { get; set; }
-    internal bool? FilterBool { get; set; }
 
     [Parameter]
     [EditorRequired]

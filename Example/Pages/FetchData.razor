@@ -1,5 +1,4 @@
 ﻿@page "/fetchdata"
-
 <PageTitle>Fetch Data</PageTitle>
 
 @using DbTable
@@ -21,14 +20,20 @@
 
     <Column Title="Created" Property="a => a.Created" Sort="true" Filter="true">
 
-    </Column> 
-    
+    </Column>
+
     <Column Title="Race" Property="a => a.Race" Sort="true" Filter="true">
 
-    </Column>   
-    
+    </Column>
+
     <Column Title="On" Property="a => a.On" Sort="true" Filter="true">
 
+    </Column>
+
+    <Column Title="Image" Property="a=>a.Image">
+        <Template Context="a">
+            <img src="data:image/png;base64, @a.Image" />
+        </Template>
     </Column>
 
 </Table>

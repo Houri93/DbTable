@@ -11,12 +11,16 @@ namespace DbTable;
 [CascadingTypeParameter(nameof(DataType))]
 public partial class Table<DataType>
 {
+    const int displayedPageCount = 2;
+
     private readonly List<DataType> items = new();
     private readonly List<Column<DataType>> columns = new();
     private int pageIndex = 0;
     private int pageCount = 0;
     private int itemsCount = 0;
     private int queryTotalCount = 0;
+    private int pageSelectStart = 1;
+    private int pageSelectEnd = 1;
 
     [Parameter]
     [EditorRequired]
@@ -39,7 +43,6 @@ public partial class Table<DataType>
 
     internal IEnumerable<Column<DataType>> FilterableColumns => columns.Where(a => a.Filter);
 
-
     private void FirstPageClicked() => SetPageIndex(0);
     private void NextPageClicked() => SetPageIndex(pageIndex + 1);
     private void PrevPageClicked() => SetPageIndex(pageIndex - 1);
@@ -47,6 +50,16 @@ public partial class Table<DataType>
 
     private void SetPageIndex(int i)
     {
+        if (i < 0)
+        {
+            return;
+        }
+
+        if (i >= pageCount)
+        {
+            return;
+        }
+
         pageIndex = i;
         UpdateData();
     }
@@ -78,7 +91,6 @@ public partial class Table<DataType>
         pageIndex = 0;
         foreach (var c in FilterableColumns)
         {
-            c.FilterBool = default;
             c.FilterString = default;
 
             c.FilterDateFrom = default;
@@ -107,6 +119,13 @@ public partial class Table<DataType>
 
         pageCount = (int)Math.Ceiling(queryTotalCount / (double)ItemsPerPage);
 
+        var pages = Enumerable
+            .Range(HandleLimits(), displayedPageCount * 2 + 1)
+            .TakeWhile(p => p <= pageCount)
+            .ToList();
+
+        pageSelectStart = pages.First();
+        pageSelectEnd = pages.Last();
 
         query = query.Skip(ItemsPerPage * pageIndex).Take(ItemsPerPage);
 
@@ -115,6 +134,11 @@ public partial class Table<DataType>
 
         items.Clear();
         items.AddRange(inMemory);
+    }
+
+    private int HandleLimits()
+    {
+        return Math.Min(Math.Max(1, pageCount - (2 * displayedPageCount)), Math.Max(1, pageIndex - displayedPageCount));
     }
 
     private IQueryable<DataType> ApplyFilters(IQueryable<DataType> query)
@@ -136,7 +160,7 @@ public partial class Table<DataType>
                 FilterTypes.DateOnly => ApplySingleFilter(column.FilterDateFrom, column.FilterDateTo, pi, query, false, false, true),
                 FilterTypes.TimeOnly => ApplySingleFilter(column.FilterTimeFrom, column.FilterTimeTo, pi, query, false, false, true),
                 FilterTypes.DateTime => ApplySingleFilter(column.FilterDateTimeFrom, column.FilterDateTimeTo, pi, query, false, false, true),
-                FilterTypes.Bool => ApplySingleFilter(column.FilterBool, null, pi, query, false, false, false),
+                FilterTypes.Bool => ApplySingleFilter(column.FilterString is null ? (bool?)null : bool.Parse(column.FilterString), null, pi, query, false, false, false),
                 FilterTypes.Enum => ApplySingleFilter(column.FilterString is null ? null : Enum.Parse(column.PropertyType, column.FilterString), null, pi, query, false, false, false),
                 _ => throw new NotImplementedException("Filter type not implemented"),
             };

@@ -10,18 +10,7 @@ public class ItemService
     public event Action Add;
 
     public ItemService()
-    {
-        using var db = new DbCon();
-        if (!db.Items.Any())
-        {
-            db.Items.AddRange(Enumerable.Range(1, 10).Select(i => new Item
-            {
-                Created = DateTime.Now,
-                Name = "Item " + i.ToString(),
-            }));
-            db.SaveChanges();
-        }
-
+    {      
         RunGenerator();
     }
 
@@ -29,13 +18,16 @@ public class ItemService
     {
         Task.Run(async () =>
         {
+            var httpClient = new HttpClient();
             while (true)
             {
                 using var db = new DbCon();
+
                 db.Items.Add(new Item
                 {
                     Created = DateTime.Now,
                     Name = "Item " + db.Items.Count(),
+                    Image = Convert.ToBase64String(await httpClient.GetByteArrayAsync("https://picsum.photos/200")),
                 });
                 db.SaveChanges();
                 Add?.Invoke();

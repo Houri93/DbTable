@@ -5,68 +5,76 @@
 
 @if (FilterableColumns.Any())
 {
-    <div>
-
-        @foreach (var column in FilterableColumns)
-        {
-            <label>@column.Title</label>
-            @switch (column.FilterType)
+    <div class="container">
+        <div class="row">
+            @foreach (var column in FilterableColumns)
             {
-
-                case FilterTypes.DoubleNumber:
-                case FilterTypes.IntNumber:
-                    var step = column.FilterType == FilterTypes.DoubleNumber ? "any" : "1";
-                    <input type="number" step="@step" @bind="column.FilterNumberFrom" />
-                    <span>-</span>
-                    <input type="number" step="@step" @bind="column.FilterNumberTo" />
-                    break;
-
-                case FilterTypes.String:
-                    <input type="text" @bind="column.FilterString" />
-                    break;
-
-                case FilterTypes.DateOnly:
-                    <input type="date" @bind="column.FilterDateFrom" />
-                    <span>-</span>
-                    <input type="date" @bind="column.FilterDateTo" />
-                    break;
-
-                case FilterTypes.TimeOnly:
-                    <input type="time" @bind="column.FilterTimeFrom" />
-                    <span>-</span>
-                    <input type="time" @bind="column.FilterTimeTo" />
-                    break;
-
-                case FilterTypes.DateTime:
-                    <input type="datetime-local" @bind="column.FilterDateTimeFrom" />
-                    <span>-</span>
-                    <input type="datetime-local" @bind="column.FilterDateTimeTo" />
-                    break;
-
-                case FilterTypes.Bool:
-                    <select @bind="column.FilterBool">
-                        <option value="">None</option>
-                        <option value="true">True</option>
-                        <option value="false">False</option>
-                    </select>
-                    break;
-
-                case FilterTypes.Enum:
-                    var values = Enum.GetValues(column.PropertyType);
-                    <select @bind="column.FilterString">
-                        <option value="">None</option>
-                        @foreach (var v in values)
+                <div class="col">
+                    <div class="form-group">
+                        <label>@column.Title</label>
+                        @switch (column.FilterType)
                         {
-                            <option value="@v">@v</option>
+
+                            case FilterTypes.DoubleNumber:
+                            case FilterTypes.IntNumber:
+                                var step = column.FilterType == FilterTypes.DoubleNumber ? "any" : "1";
+                                <input class="form-control" type="number" step="@step" @bind="column.FilterNumberFrom" />
+                                <span>-</span>
+                                <input class="form-control" type="number" step="@step" @bind="column.FilterNumberTo" />
+                                break;
+
+                            case FilterTypes.String:
+                                <input class="form-control" type="text" @bind="column.FilterString" />
+                                break;
+
+                            case FilterTypes.DateOnly:
+                                <input class="form-control" type="date" @bind="column.FilterDateFrom" />
+                                <span>-</span>
+                                <input class="form-control" type="date" @bind="column.FilterDateTo" />
+                                break;
+
+                            case FilterTypes.TimeOnly:
+                                <input class="form-control" type="time" @bind="column.FilterTimeFrom" />
+                                <span>-</span>
+                                <input class="form-control" type="time" @bind="column.FilterTimeTo" />
+                                break;
+
+                            case FilterTypes.DateTime:
+                                <input class="form-control" type="datetime-local" @bind="column.FilterDateTimeFrom" />
+                                <span>-</span>
+                                <input class="form-control" type="datetime-local" @bind="column.FilterDateTimeTo" />
+                                break;
+
+                            case FilterTypes.Bool:
+                                <select class="form-control" @bind="column.FilterString">
+                                    <option value="">None</option>
+                                    <option value="@true">True</option>
+                                    <option value="@false">False</option>
+                                </select>
+                                break;
+
+                            case FilterTypes.Enum:
+                                var values = Enum.GetValues(column.PropertyType);
+                                <select class="form-control" @bind="column.FilterString">
+                                    <option value="">None</option>
+                                    @foreach (var v in values)
+                                    {
+                                        <option value="@v">@v</option>
+                                    }
+                                </select>
+                                break;
                         }
-                    </select>
-                    break;
+                    </div>
+
+                </div>
             }
-        }
 
-        <button @onclick="FilterClicked">Filter</button>
-        <button @onclick="FilterClearClicked">Clear</button>
+        </div>
 
+        <div class="row">
+            <button class="btn btn-primary" @onclick="FilterClicked">Filter</button>
+            <button class="btn btn-secondary" @onclick="FilterClearClicked">Clear</button>
+        </div>
     </div>
 }
 
@@ -112,20 +120,40 @@
 
         }
     </tbody>
-
-    <tfoot>
-        <button @onclick="FirstPageClicked" class="btn btn-primary @(FirstPageEnabled ? "" : "disabled")">First</button>
-        <button @onclick="PrevPageClicked" class="btn btn-primary @(PrevPageEnabled ? "" : "disabled")">Previous</button>
-
-        @*    @for (var pn = pageSelectStart; pn <= pageSelectEnd; pn++)
-            {
-            <button @onclick="()=> SetPageIndex(pn-1)" class="btn btn-link">Next</button>
-            }*@
-
-        <p>@itemsCount</p>
-
-        <button @onclick="NextPageClicked" class="btn btn-primary @(NextPageEnabled ? "" : "disabled")">Next</button>
-        <button @onclick="LastPageClicked" class="btn btn-primary @(LastPageEnabled ? "" : "disabled")">Last</button>
-    </tfoot>
 </table>
 
+<nav>
+    <ul class="pagination">
+        <li class="page-item @(FirstPageEnabled ? "" : "disabled")" @onclick="FirstPageClicked">
+            <a class="page-link" href="#" onclick="return false">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+
+        <li class="page-item @(PrevPageEnabled ? "" : "disabled")" @onclick="PrevPageClicked">
+            <a class="page-link" href="#" onclick="return false">
+                <span aria-hidden="true">&lsaquo;</span>
+            </a>
+        </li>
+        @for (var i = pageSelectStart; i <= pageSelectEnd; i++)
+        {
+            var pn = i;
+            var active = i - 1 == pageIndex ? "active" : "";
+            <li class="page-item @active" @onclick="() => SetPageIndex(pn-1)">
+                <a class="page-link" href="#" onclick="return false">@pn</a>
+            </li>
+        }
+        <li class="page-item @(NextPageEnabled ? "" : "disabled")" @onclick="NextPageClicked">
+            <a class="page-link" href="#" onclick="return false">
+                <span aria-hidden="true">&rsaquo;</span>
+            </a>
+        </li>
+        <li class="page-item @(LastPageEnabled ? "" : "disabled")" @onclick="LastPageClicked">
+            <a class="page-link" href="#" onclick="return false">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<p>@itemsCount</p>

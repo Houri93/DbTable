@@ -24,6 +24,7 @@ public partial class FetchData : IDisposable
     {
         InvokeAsync(StateHasChanged);
     }
+
     public void Dispose()
     {
         ItemService.Add -= ItemService_Add;
