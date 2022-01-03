@@ -1,10 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <OutputType>Library</OutputType>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>Houri93</Authors>
+    <Copyright>open source</Copyright>
+    <Description>Blazor component to display IQueryable&lt;T&gt; items in tables, supports real-time data, paganation, sorting and filtering.</Description>
+    <PackageProjectUrl>https://github.com/Houri93/DbTable</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Houri93/DbTable</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>blazor, table, dbtable, EF, Entity Framework, real-time, sort, sorting, order, ordering, filter, filtering</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
