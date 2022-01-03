@@ -7,46 +7,51 @@
 {
     <div class="container">
         <div class="row">
+            @{
+                int columnGridSize = 6;
+                if (FilterableColumns.Count() >= 3)
+                    columnGridSize = 4;
+            }
             @foreach (var column in FilterableColumns)
             {
-                <div class="col">
-                    <div class="form-group">
-                        <label>@column.Title</label>
+                <div class="col-md-@columnGridSize">
+                    <div class="input-group input-group-sm mb-3">
                         @switch (column.FilterType)
                         {
-
                             case FilterTypes.DoubleNumber:
                             case FilterTypes.IntNumber:
                                 var step = column.FilterType == FilterTypes.DoubleNumber ? "any" : "1";
-                                <input class="form-control" type="number" step="@step" @bind="column.FilterNumberFrom" />
-                                <span>-</span>
-                                <input class="form-control" type="number" step="@step" @bind="column.FilterNumberTo" />
+                                <span class="input-group-text" id="inputGroup-sizing-sm">@column.PropertyName</span>
+                                <input type="number" step="@step" class="form-control" placeholder="from" @bind="@column.FilterNumberFrom">
+                                <input type="number" step="@step" class="form-control" placeholder="to" @bind="@column.FilterNumberTo">
                                 break;
 
                             case FilterTypes.String:
-                                <input class="form-control" type="text" @bind="column.FilterString" />
+                                <span class="input-group-text" id="inputGroup-sizing-sm">@column.PropertyName</span>
+                                <input type="text" class="form-control" aria-label="Please Enter @column.PropertyName" @bind="@column.FilterString" aria-describedby="inputGroup-sizing-sm">
                                 break;
 
                             case FilterTypes.DateOnly:
-                                <input class="form-control" type="date" @bind="column.FilterDateFrom" />
-                                <span>-</span>
-                                <input class="form-control" type="date" @bind="column.FilterDateTo" />
+                                <span class="input-group-text" id="inputGroup-sizing-sm">@column.PropertyName</span>
+                                <input type="date" class="form-control" placeholder="from" @bind="@column.FilterDateFrom">
+                                <input type="date" class="form-control" placeholder="to" @bind="@column.FilterDateTo">
                                 break;
 
                             case FilterTypes.TimeOnly:
-                                <input class="form-control" type="time" @bind="column.FilterTimeFrom" />
-                                <span>-</span>
-                                <input class="form-control" type="time" @bind="column.FilterTimeTo" />
+                                <span class="input-group-text" id="inputGroup-sizing-sm">@column.PropertyName</span>
+                                <input type="time" class="form-control" placeholder="from" @bind="@column.FilterTimeFrom">
+                                <input type="tme" class="form-control" placeholder="to" @bind="@column.FilterTimeTo">
                                 break;
 
                             case FilterTypes.DateTime:
-                                <input class="form-control" type="datetime-local" @bind="column.FilterDateTimeFrom" />
-                                <span>-</span>
-                                <input class="form-control" type="datetime-local" @bind="column.FilterDateTimeTo" />
+                                <span class="input-group-text" id="inputGroup-sizing-sm">@column.PropertyName</span>
+                                <input type="datetime-local" class="form-control" placeholder="from" @bind="@column.FilterDateTimeFrom">
+                                <input type="datetime-local" class="form-control" placeholder="to" @bind="@column.FilterDateTimeTo">
                                 break;
 
                             case FilterTypes.Bool:
-                                <select class="form-control" @bind="column.FilterString">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">@column.PropertyName</span>
+                                <select type="text" class="form-control" aria-label="Please Enter @column.PropertyName" @bind="@column.Filter" aria-describedby="inputGroup-sizing-sm">
                                     <option value="">None</option>
                                     <option value="@bool.TrueString">True</option>
                                     <option value="@bool.FalseString">False</option>
@@ -55,7 +60,8 @@
 
                             case FilterTypes.Enum:
                                 var values = Enum.GetValues(column.PropertyType);
-                                <select class="form-control" @bind="column.FilterString">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">@column.PropertyName</span>
+                                <select type="text" class="form-control" @bind="column.FilterString" aria-label="Please Enter @column.PropertyName" aria-describedby="inputGroup-sizing-sm">
                                     <option value="">None</option>
                                     @foreach (var v in values)
                                     {
@@ -65,15 +71,17 @@
                                 break;
                         }
                     </div>
-
                 </div>
             }
-
         </div>
 
         <div class="row">
-            <button class="btn btn-primary" @onclick="FilterClicked">Filter</button>
-            <button class="btn btn-secondary" @onclick="FilterClearClicked">Clear</button>
+            <div class="col-md-12">
+                <div style="text-align:right; padding-top: 15px;padding-bottom: 15px;">
+                    <button class="btn btn-secondary" @onclick="FilterClearClicked">Clear</button>
+                    <button class="btn btn-primary" @onclick="FilterClicked">Filter</button>
+                </div>
+            </div>
         </div>
     </div>
 }
