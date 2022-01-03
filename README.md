@@ -5,6 +5,14 @@ Data is queried from an EF core DbContext instance
 
 Example:
 
+@page "/fetchdata"
+<PageTitle>Fetch Data</PageTitle>
+
+@using DbTable
+@using Example.Data
+
+<h1>Fetch Data</h1>
+
 <Table DataType="Item" DataLoader="itemLoader" ItemsPerPage="5" Class="table">
 
     <Column Title="Id" Property="a => a.Id" Sort="true" Filter="true">
