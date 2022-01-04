@@ -26,6 +26,13 @@ public partial class Table<DataType>
     [EditorRequired]
     public int ItemsPerPage { get; set; }
 
+
+    [Parameter]
+    public bool ShowItemsCount { get; set; } = true;   
+
+    [Parameter]
+    public bool ShowPageCount { get; set; } = true;
+
     [Parameter]
     [EditorRequired]
     public IDataLoader<DataType> DataLoader { get; set; }

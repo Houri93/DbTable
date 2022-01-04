@@ -51,7 +51,7 @@
 
                             case FilterTypes.Bool:
                                 <span class="input-group-text" id="inputGroup-sizing-sm">@column.PropertyName</span>
-                                <select type="text" class="form-control" aria-label="Please Enter @column.PropertyName" @bind="@column.Filter" aria-describedby="inputGroup-sizing-sm">
+                                <select type="text" class="form-control" aria-label="Please Enter @column.PropertyName" @bind="@column.FilterString" aria-describedby="inputGroup-sizing-sm">
                                     <option value="">None</option>
                                     <option value="@bool.TrueString">True</option>
                                     <option value="@bool.FalseString">False</option>
@@ -125,13 +125,21 @@
         }
         else
         {
-
+            <tr>Empty ...</tr>
         }
     </tbody>
 </table>
 
 <nav>
-    <ul class="pagination">
+    <ul class="pagination justify-content-center">
+        @if (ShowItemsCount)
+        {
+            <li class="page-item">
+                <a class="page-link disabled">
+                    <span aria-hidden="true">Items @itemsCount</span>
+                </a>
+            </li>
+        }
         <li class="page-item @(FirstPageEnabled ? "" : "disabled")" @onclick="FirstPageClicked">
             <a class="page-link" href="#" onclick="return false">
                 <span aria-hidden="true">&laquo;</span>
@@ -161,7 +169,13 @@
                 <span aria-hidden="true">&raquo;</span>
             </a>
         </li>
+           @if (ShowPageCount)
+        {
+            <li class="page-item">
+                <a class="page-link disabled">
+                    <span aria-hidden="true">Pages @pageCount</span>
+                </a>
+            </li>
+        }
     </ul>
 </nav>
-
-<p>@itemsCount</p>
