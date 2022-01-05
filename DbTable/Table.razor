@@ -21,37 +21,37 @@
                             case FilterTypes.DoubleNumber:
                             case FilterTypes.IntNumber:
                                 var step = column.FilterType == FilterTypes.DoubleNumber ? "any" : "1";
-                                <span class="input-group-text" id="inputGroup-sizing-sm">@column.PropertyName</span>
+                                <span class="input-group-text" id="inputGroup-sizing-sm">@column.Title</span>
                                 <input type="number" step="@step" class="form-control" placeholder="from" @bind="@column.FilterNumberFrom">
                                 <input type="number" step="@step" class="form-control" placeholder="to" @bind="@column.FilterNumberTo">
                                 break;
 
                             case FilterTypes.String:
-                                <span class="input-group-text" id="inputGroup-sizing-sm">@column.PropertyName</span>
-                                <input type="text" class="form-control" aria-label="Please Enter @column.PropertyName" @bind="@column.FilterString" aria-describedby="inputGroup-sizing-sm">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">@column.Title</span>
+                                <input type="text" class="form-control" aria-label="Please Enter @column.Title" @bind="@column.FilterString" aria-describedby="inputGroup-sizing-sm">
                                 break;
 
                             case FilterTypes.DateOnly:
-                                <span class="input-group-text" id="inputGroup-sizing-sm">@column.PropertyName</span>
+                                <span class="input-group-text" id="inputGroup-sizing-sm">@column.Title</span>
                                 <input type="date" class="form-control" placeholder="from" @bind="@column.FilterDateFrom">
                                 <input type="date" class="form-control" placeholder="to" @bind="@column.FilterDateTo">
                                 break;
 
                             case FilterTypes.TimeOnly:
-                                <span class="input-group-text" id="inputGroup-sizing-sm">@column.PropertyName</span>
+                                <span class="input-group-text" id="inputGroup-sizing-sm">@column.Title</span>
                                 <input type="time" class="form-control" placeholder="from" @bind="@column.FilterTimeFrom">
                                 <input type="tme" class="form-control" placeholder="to" @bind="@column.FilterTimeTo">
                                 break;
 
                             case FilterTypes.DateTime:
-                                <span class="input-group-text" id="inputGroup-sizing-sm">@column.PropertyName</span>
+                                <span class="input-group-text" id="inputGroup-sizing-sm">@column.Title</span>
                                 <input type="datetime-local" class="form-control" placeholder="from" @bind="@column.FilterDateTimeFrom">
                                 <input type="datetime-local" class="form-control" placeholder="to" @bind="@column.FilterDateTimeTo">
                                 break;
 
                             case FilterTypes.Bool:
-                                <span class="input-group-text" id="inputGroup-sizing-sm">@column.PropertyName</span>
-                                <select type="text" class="form-control" aria-label="Please Enter @column.PropertyName" @bind="@column.FilterString" aria-describedby="inputGroup-sizing-sm">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">@column.Title</span>
+                                <select type="text" class="form-control" aria-label="Please Enter @column.Title" @bind="@column.FilterString" aria-describedby="inputGroup-sizing-sm">
                                     <option value="">None</option>
                                     <option value="@bool.TrueString">True</option>
                                     <option value="@bool.FalseString">False</option>
@@ -60,8 +60,8 @@
 
                             case FilterTypes.Enum:
                                 var values = Enum.GetValues(column.PropertyType);
-                                <span class="input-group-text" id="inputGroup-sizing-sm">@column.PropertyName</span>
-                                <select type="text" class="form-control" @bind="column.FilterString" aria-label="Please Enter @column.PropertyName" aria-describedby="inputGroup-sizing-sm">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">@column.Title</span>
+                                <select type="text" class="form-control" @bind="column.FilterString" aria-label="Please Enter @column.Title" aria-describedby="inputGroup-sizing-sm">
                                     <option value="">None</option>
                                     @foreach (var v in values)
                                     {
